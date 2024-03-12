@@ -13,17 +13,22 @@ import java.util.List;
 @Controller
 public class BoardController {
 
-    private final BoardNativeRepository boardNativeRepository;
+    private final BoardPersistRepository boardPersistRepository;
 
+    @PostMapping("/board/save")
+    public String save(BoardRequest.SaveDTO reqDTO){
+        boardPersistRepository.save(reqDTO.toEntity());
+        return "redirect:/";
+    }
     @PostMapping("/board/{id}/update")
     public String update(@PathVariable Integer id, String title, String content, String username){
-        boardNativeRepository.updateById(id, title, content, username);
+        boardPersistRepository.updateById(id, title, content, username);
         return "redirect:/board/"+id;
     }
 
     @GetMapping("/board/{id}/update-form")
     public String updateForm(@PathVariable Integer id, HttpServletRequest request){
-        Board board = boardNativeRepository.findById(id);
+        Board board = boardPersistRepository.findById(id);
         request.setAttribute("board", board);
 
         return "board/update-form";
@@ -31,19 +36,13 @@ public class BoardController {
 
     @PostMapping("/board/{id}/delete")
     public String delete(@PathVariable Integer id){
-        boardNativeRepository.deleteById(id);
-        return "redirect:/";
-    }
-
-    @PostMapping("/board/save")
-    public String save(String title, String content, String username){
-        boardNativeRepository.save(title, content, username);
+        boardPersistRepository.deleteById(id);
         return "redirect:/";
     }
 
     @GetMapping("/" )
     public String index(HttpServletRequest request) {
-        List<Board> boardList = boardNativeRepository.findAll();
+        List<Board> boardList = boardPersistRepository.findAll();
         request.setAttribute("boardList", boardList);
         return "index";
     }
@@ -55,7 +54,7 @@ public class BoardController {
 
     @GetMapping("/board/{id}")
     public String detail(@PathVariable Integer id, HttpServletRequest request) {
-        Board board = boardNativeRepository.findById(id);
+        Board board = boardPersistRepository.findById(id);
         request.setAttribute("board", board);
         return "board/detail";
     }
