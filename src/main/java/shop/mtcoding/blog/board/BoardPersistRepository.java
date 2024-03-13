@@ -14,6 +14,12 @@ public class BoardPersistRepository {
     private final EntityManager em;
 
     @Transactional
+    public void updateById(int id, BoardRequest.UpdateDTO reqDTO){
+        Board board = findById(id); // 영속화된 객체 상태를 변경하고 트랜잭션을 변경하면 더티체킹
+        board.update(reqDTO);
+    } // 더티체킹
+
+    @Transactional
     public void deleteByIdV2(int id){
         Board board = findById(id);
         em.remove(board); // PC에 객체 지우고, (트랜잭션 종료 시) 삭제 쿼리 전송
@@ -42,18 +48,6 @@ public class BoardPersistRepository {
         em.persist(board);
         // 2. board -> 영속 객체
         return board;
-    }
-
-    @Transactional
-    public void updateById(int id, String title, String content, String username) {
-        Query query =
-                em.createNativeQuery("update board_tb set title=?, content=?, username=? where id=?");
-        query.setParameter(1, title);
-        query.setParameter(2, content);
-        query.setParameter(3, username);
-        query.setParameter(4, id);
-
-        query.executeUpdate();
     }
 
 }

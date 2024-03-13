@@ -22,6 +22,18 @@ public class BoardPersistRepositoryTest {
     private EntityManager em;
 
     @Test
+    public void updateById_test(){
+        // given
+        int id = 1;
+        String title = "제목수정1";
+
+        // when
+        Board board = boardPersistRepository.findById(id);
+        board.setTitle(title);
+        em.flush(); // 눈으로 보려면
+    }
+
+    @Test
     public void deleteByIdV2_test(){
         // given
         int id = 1;
